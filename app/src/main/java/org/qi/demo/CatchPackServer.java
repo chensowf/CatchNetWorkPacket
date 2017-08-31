@@ -17,7 +17,9 @@ import java.io.IOException;
 
 public class CatchPackServer extends VpnService implements Runnable{
 
-    boolean isRunning;
+    public static CatchPackServer Instance;
+
+    public boolean isRunning;
     ParcelFileDescriptor fd;
 
     Thread catchPackThread;
@@ -38,6 +40,7 @@ public class CatchPackServer extends VpnService implements Runnable{
         isRunning = true;
         catchPackThread = new Thread(this,"catch packet thread");
         catchPackThread.start();
+        Instance = this;
     }
 
     ParcelFileDescriptor openTun()
@@ -101,6 +104,18 @@ public class CatchPackServer extends VpnService implements Runnable{
                 Log.d("源ip","数据包是从:"+CommonMethods.ipIntToString(ipHeader.getSourceIP())+" 发出");
                 Log.d("目标ip","数据包目的地:"+CommonMethods.ipIntToString(ipHeader.getDestinationIP()));
                 break;
+        }
+    }
+
+    public void stopCatchPacket()
+    {
+        isRunning = false;
+        if(fd != null){
+            try {
+                fd.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

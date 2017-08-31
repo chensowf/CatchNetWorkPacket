@@ -7,6 +7,7 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    boolean isStart = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +24,16 @@ public class MainActivity extends AppCompatActivity {
         else
         {
             startService(new Intent(this,CatchPackServer.class));
+            isStart = true;
+        }
+    }
+
+    public void onButton1(View v)
+    {
+        if(isStart)
+        {
+            CatchPackServer.Instance.stopCatchPacket();
+            stopService(new Intent(this, CatchPackServer.class));
         }
     }
 
@@ -31,8 +42,20 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK)
         {
-            if(requestCode == 11)
-                startService(new Intent(this,CatchPackServer.class));
+            if(requestCode == 11) {
+                startService(new Intent(this, CatchPackServer.class));
+                isStart = true;
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(isStart)
+        {
+            CatchPackServer.Instance.stopCatchPacket();
+            stopService(new Intent(this, CatchPackServer.class));
         }
     }
 }
