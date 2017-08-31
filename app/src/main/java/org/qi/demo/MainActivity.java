@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    void onButton(View v)
+    public void onButton(View v)
     {
         Intent intent = CatchPackServer.prepare(this);
         if(intent != null)
@@ -23,6 +23,16 @@ public class MainActivity extends AppCompatActivity {
         else
         {
             startService(new Intent(this,CatchPackServer.class));
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK)
+        {
+            if(requestCode == 11)
+                startService(new Intent(this,CatchPackServer.class));
         }
     }
 }
